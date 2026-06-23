@@ -80,3 +80,22 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+html,
+body,
+a,
+button {
+  cursor: none;
+}
+* {
+  cursor: none;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+::selection {
+  background: #22d3ee;
+  color: black;
+}

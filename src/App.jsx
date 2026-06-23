@@ -8,10 +8,14 @@ import Education from './components/Education'
 import Certifications from './components/Certifications'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
+import Loader from './components/Loader'
+import CustomCursor from './components/CustomCursor'
 
 function App() {
   return (
     <div className="bg-bg text-text font-body">
+      <Loader />
+      <CustomCursor />
       <Navbar />
       <Hero />
       <About />
