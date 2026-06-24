@@ -25,7 +25,7 @@ const Hero = () => {
   return (
     <section
       id="home"
-      className="relative flex min-h-screen items-center overflow-hidden px-6 py-20"
+      className="relative flex min-h-screen items-center overflow-hidden px-6 py-18"
     >
       {/* Grid */}
       <div
@@ -87,8 +87,8 @@ const Hero = () => {
               duration: 0.7,
             }}
             className="
-              text-6xl font-black leading-none
-              md:text-8xl
+              text-5xl font-black leading-none
+              md:text-7xl
             "
           >
             <span className="block text-white">
@@ -349,7 +349,7 @@ const Hero = () => {
           repeat: Infinity,
         }}
         className="
-          absolute bottom-8 left-1/2
+          absolute bottom-20 left-1/2
           -translate-x-1/2
           text-zinc-500
         "
