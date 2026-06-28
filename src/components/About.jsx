@@ -1,9 +1,5 @@
 import { motion } from "framer-motion";
 import {
-  FiCode,
-  FiServer,
-  FiUsers,
-  FiAward,
   FiArrowUpRight,
 } from "react-icons/fi";
 
@@ -42,7 +38,7 @@ const About = () => {
       className="relative overflow-hidden py-32 px-6"
     >
       {/* Background Text */}
-      <h2
+      {/* <h2
         className="
         pointer-events-none
         absolute
@@ -57,12 +53,12 @@ const About = () => {
       "
       >
         ABOUT
-      </h2>
+      </h2> */}
 
       {/* Glow */}
-      <div className="absolute left-0 top-0 h-[500px] w-[500px] rounded-full bg-cyan-500/10 blur-[150px]" />
+      <div className="absolute left-0 top-0 h-125 w-125 rounded-full bg-cyan-500/10 blur-[150px]" />
 
-      <div className="absolute right-0 bottom-0 h-[500px] w-[500px] rounded-full bg-purple-500/10 blur-[150px]" />
+      <div className="absolute right-0 bottom-0 h-125 w-125 rounded-full bg-purple-500/10 blur-[150px]" />
 
       <div className="relative z-10 mx-auto max-w-7xl">
         <div className="grid gap-16 lg:grid-cols-[420px_1fr]">
@@ -85,7 +81,7 @@ const About = () => {
               rounded-[40px]
               border
               border-white/10
-              bg-white/[0.03]
+              bg-white/3
               p-10
               backdrop-blur-2xl
             "
@@ -101,12 +97,12 @@ const About = () => {
               }}
               className="
                 absolute
-                right-[-80px]
-                top-[-80px]
-                h-[250px]
-                w-[250px]
+                -right-20
+                -top-20
+                h-62.5
+                w-62.5
                 rounded-full
-                bg-gradient-to-br
+                bg-linear-to-br
                 from-cyan-500/20
                 to-purple-500/20
                 blur-[100px]
@@ -121,7 +117,7 @@ const About = () => {
                 w-28
                 items-center
                 justify-center
-                rounded-[32px]
+                rounded-4xl
                 bg-gradient-to-br
                 from-cyan-500
                 via-blue-500
