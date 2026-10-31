@@ -1,363 +1,239 @@
-import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import {
+  FiArrowDownRight,
+  FiArrowUpRight,
+  FiDownload,
   FiGithub,
-  FiLinkedin,
-  FiMail,
-  FiArrowDown,
 } from "react-icons/fi";
+import { journey, profile, projects, stackLayers } from "../data/portfolio";
+import Magnetic from "./ui/Magnetic";
+import HeroCanvas from "./HeroCanvas";
+import { gsap, prefersReducedMotion, ScrollTrigger } from "../lib/smoothScroll";
 
-const techs = [
-  "React",
-  "Node.js",
-  "Express",
-  "MongoDB",
-  "Tailwind",
-  "JavaScript",
+const ease = [0.16, 1, 0.3, 1];
+
+const pad = (n) => String(n).padStart(2, "0");
+const strip = [
+  [pad(journey.filter((j) => j.lane === "work").length), "internships"],
+  [pad(projects.length), "live projects"],
+  [pad(stackLayers.reduce((n, l) => n + l.skills.length, 0)), "technologies"],
+  ["MCA", "@ BHU"],
 ];
 
-const Hero = () => {
-  const scrollTo = (id) => {
-    document.getElementById(id)?.scrollIntoView({
-      behavior: "smooth",
-    });
-  };
-
+// One headline line: its characters rise out of a mask, one after another.
+const Line = ({ text, ready, delay, className = "" }) => {
+  const reduced = useReducedMotion();
   return (
-    <section
-      id="home"
-      className="relative flex min-h-screen items-center overflow-hidden px-6 py-18"
-    >
-      {/* Grid */}
-      <div
-        className="
-        absolute inset-0 opacity-30
-        bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)]
-        bg-[size:60px_60px]
-      "
-      />
-
-      {/* Top Glow */}
-      <div className="absolute left-1/2 top-[-250px] h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-cyan-500/20 blur-[150px]" />
-
-      {/* Left Glow */}
-      <div className="absolute left-[-200px] top-1/2 h-[400px] w-[400px] -translate-y-1/2 rounded-full bg-purple-500/20 blur-[140px]" />
-
-      {/* Right Glow */}
-      <div className="absolute right-[-200px] top-1/2 h-[400px] w-[400px] -translate-y-1/2 rounded-full bg-pink-500/20 blur-[140px]" />
-
-      <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-20 lg:grid-cols-2">
-        {/* LEFT */}
-        <div>
-          {/* Badge */}
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 20,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            className="
-              mb-8 inline-flex items-center gap-3
-              rounded-full border border-emerald-500/20
-              bg-emerald-500/10
-              px-5 py-2
-              backdrop-blur-xl
-            "
-          >
-            <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
-
-            <span className="text-sm text-emerald-300">
-              Available for opportunities
-            </span>
-          </motion.div>
-
-          {/* Title */}
-          <motion.h1
-            initial={{
-              opacity: 0,
-              y: 30,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: 0.7,
-            }}
-            className="
-              text-5xl font-black leading-none
-              md:text-7xl
-            "
-          >
-            <span className="block text-white">
-              SHIVAM
-            </span>
-
-            <span
-              className="
-                block
-                bg-gradient-to-r
-                from-cyan-400
-                via-purple-400
-                to-pink-500
-                bg-clip-text
-                text-transparent
-              "
-            >
-              KUMAR
-            </span>
-          </motion.h1>
-
-          {/* Subtitle */}
-          <motion.p
-            initial={{
-              opacity: 0,
-              y: 30,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              delay: 0.2,
-            }}
-            className="
-              mt-8
-              max-w-xl
-              text-lg
-              leading-8
-              text-zinc-400
-              md:text-xl
-            "
-          >
-            I craft beautiful and high-performance
-            digital experiences using modern web
-            technologies and scalable backend
-            solutions.
-          </motion.p>
-
-          {/* Buttons */}
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 30,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              delay: 0.3,
-            }}
-            className="mt-12 flex flex-wrap gap-4"
-          >
-            <button
-              data-cursor-hover
-              onClick={() => scrollTo("projects")}
-              className="
-                group
-                relative
-                overflow-hidden
-                rounded-2xl
-                bg-white
-                px-8
-                py-4
-                font-semibold
-                text-black
-                transition-all
-                hover:scale-105
-              "
-            >
-              Explore Work
-            </button>
-
-            <a
-              href="/resume.pdf"
-              download
-              data-cursor-hover
-              className="
-                rounded-2xl
-                border border-white/10
-                bg-white/5
-                px-8
-                py-4
-                backdrop-blur-xl
-                transition-all
-                hover:border-cyan-400
-                hover:bg-white/10
-              "
-            >
-              Download CV
-            </a>
-          </motion.div>
-
-          {/* Social */}
-          <motion.div
-            initial={{
-              opacity: 0,
-            }}
-            animate={{
-              opacity: 1,
-            }}
-            transition={{
-              delay: 0.5,
-            }}
-            className="mt-12 flex gap-6 text-2xl"
-          >
-            <a
-              href="https://github.com/shivam0-1"
-              target="_blank"
-              rel="noreferrer"
-              className="
-                text-zinc-500
-                transition
-                hover:text-cyan-400
-              "
-            >
-              <FiGithub />
-            </a>
-
-            <a
-              href="https://www.linkedin.com/in/shivam---kumar"
-              target="_blank"
-              rel="noreferrer"
-              className="
-                text-zinc-500
-                transition
-                hover:text-cyan-400
-              "
-            >
-              <FiLinkedin />
-            </a>
-
-            <a
-              href="mailto:shivam2593479@gmail.com"
-              className="
-                text-zinc-500
-                transition
-                hover:text-cyan-400
-              "
-            >
-              <FiMail />
-            </a>
-          </motion.div>
-        </div>
-
-        {/* RIGHT */}
-        <div className="relative hidden h-[500px] lg:block">
-          {/* Orb */}
-          <motion.div
-            animate={{
-              rotate: 360,
-            }}
-            transition={{
-              duration: 40,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-            className="
-              absolute left-1/2 top-1/2
-              h-[400px] w-[400px]
-              -translate-x-1/2
-              -translate-y-1/2
-              rounded-full
-              border border-white/10
-            "
-          />
-
-          {/* Center Glow */}
-          <motion.div
-            animate={{
-              scale: [1, 1.15, 1],
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-            }}
-            className="
-              absolute left-1/2 top-1/2
-              h-[250px] w-[250px]
-              -translate-x-1/2
-              -translate-y-1/2
-              rounded-full
-              bg-gradient-to-br
-              from-cyan-500/40
-              via-purple-500/40
-              to-pink-500/40
-              blur-3xl
-            "
-          />
-
-          {/* Floating Tech Pills */}
-          {techs.map((tech, index) => {
-            const angle =
-              (index * 360) / techs.length;
-
-            return (
-              <motion.div
-                key={tech}
-                animate={{
-                  rotate: 360,
-                }}
-                transition={{
-                  duration: 20 + index * 2,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
-                className="
-                  absolute
-                  left-1/2
-                  top-1/2
-                  h-[320px]
-                  w-[320px]
-                  -translate-x-1/2
-                  -translate-y-1/2
-                "
-              >
-                <div
-                  style={{
-                    transform: `rotate(${angle}deg) translateY(-160px)`,
-                  }}
-                  className="
-                    absolute
-                    left-1/2
-                    top-1/2
-                    rounded-full
-                    border border-white/10
-                    bg-white/5
-                    px-5 py-2
-                    backdrop-blur-xl
-                  "
-                >
-                  {tech}
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Scroll */}
-      <motion.div
-        animate={{
-          y: [0, 10, 0],
+    <span className={`block overflow-hidden pb-[0.08em] ${className}`}>
+      <span className="sr-only">{text}</span>
+      <motion.span
+        aria-hidden="true"
+        className="block whitespace-nowrap"
+        initial={reduced ? false : "hidden"}
+        animate={ready ? "shown" : "hidden"}
+        variants={{
+          hidden: {},
+          shown: {
+            transition: { staggerChildren: 0.028, delayChildren: delay },
+          },
         }}
-        transition={{
-          duration: 1.6,
-          repeat: Infinity,
-        }}
-        className="
-          absolute bottom-20 left-1/2
-          -translate-x-1/2
-          text-zinc-500
-        "
       >
-        <FiArrowDown size={24} />
-      </motion.div>
-    </section>
+        {text.split("").map((ch, i) => (
+          <motion.span
+            key={i}
+            className="inline-block"
+            variants={{ hidden: { y: "108%" }, shown: { y: 0 } }}
+            transition={{ duration: 1, ease }}
+          >
+            {ch === " " ? " " : ch}
+          </motion.span>
+        ))}
+      </motion.span>
+    </span>
   );
 };
 
-export default Hero;
+export default function Hero({ ready = true }) {
+  const reduced = useReducedMotion();
+  const sectionRef = useRef(null);
+  const copyRef = useRef(null);
+  const canvasRef = useRef(null);
+  const morph = useRef(0);
+
+  const enter = (delay = 0) => ({
+    initial: reduced ? false : { opacity: 0, y: 22 },
+    animate: { opacity: ready ? 1 : 0, y: ready ? 0 : 22 },
+    transition: {
+      duration: reduced ? 0 : 0.9,
+      delay: reduced ? 0 : delay,
+      ease,
+    },
+  });
+
+  // As the hero leaves, the sphere unrolls into a disc and the copy drifts up and away.
+  useEffect(() => {
+    if (prefersReducedMotion()) return;
+    const ctx = gsap.context(() => {
+      const scrub = {
+        trigger: sectionRef.current,
+        start: "top top",
+        end: "bottom top",
+        scrub: true,
+      };
+      gsap.to(copyRef.current, {
+        yPercent: -12,
+        opacity: 0,
+        ease: "none",
+        scrollTrigger: scrub,
+      });
+      gsap.to(canvasRef.current, {
+        yPercent: 12,
+        scale: 1.12,
+        ease: "none",
+        scrollTrigger: scrub,
+      });
+      ScrollTrigger.create({
+        ...scrub,
+        onUpdate: (self) => (morph.current = self.progress),
+      });
+    }, sectionRef);
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <section
+      ref={sectionRef}
+      id="top"
+      aria-labelledby="hero-title"
+      className="hero-section relative isolate flex flex-col overflow-hidden"
+    >
+      <motion.div
+        ref={canvasRef}
+        className="hero-canvas pointer-events-none absolute inset-0 -z-10"
+        initial={reduced ? false : { opacity: 0 }}
+        animate={{ opacity: ready ? 1 : 0 }}
+        transition={{ duration: 2, ease }}
+      >
+        <HeroCanvas morph={morph} />
+      </motion.div>
+
+      <div
+        ref={copyRef}
+        className="mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-4 pb-12 pt-[44svh] sm:px-6 sm:pt-[40svh] lg:px-10 lg:pt-32"
+      >
+        <div className="max-w-[46rem] lg:max-w-[52%]">
+          {/* <motion.div
+            {...enter(0)}
+            className="mb-8 flex flex-wrap items-center gap-3"
+          >
+            <span className="label inline-flex items-center gap-2.5 rounded-full border border-signal/30 bg-signal/10 px-3 py-1.5 text-signal">
+              <span className="status-light" aria-hidden="true" />
+              {profile.available
+                ? "Open to opportunities"
+                : "Building for the web"}
+            </span>
+            <span className="label text-muted">Full-stack Developer</span>
+          </motion.div> */}
+
+          <h1 id="hero-title">
+            <motion.span
+              {...enter(0.05)}
+              className="label mb-5 block text-muted"
+            >
+              {profile.role}
+            </motion.span>
+            <span className="display block text-[clamp(2.5rem,11.4vw,5.5rem)] lg:text-[clamp(3rem,5.5vw,5.2rem)]">
+              <Line text="Shivam" ready={ready} delay={0.1} />
+              <Line
+                text="Kumar."
+                ready={ready}
+                delay={0.35}
+                className="text-signal"
+              />
+            </span>
+          </h1>
+
+          <motion.p
+            {...enter(0.55)}
+            className="mt-8 max-w-[30rem] text-base leading-relaxed text-muted sm:text-lg"
+          >
+            I turn ideas into{" "}
+            <span className="text-text">thoughtful interfaces</span> and{" "}
+            <span className="text-text">dependable systems</span>, from the
+            first React component to the last API endpoint.
+          </motion.p>
+
+          <motion.div
+            {...enter(0.65)}
+            className="mt-9 flex flex-wrap items-center gap-3"
+          >
+            <Magnetic>
+              <a href="#work" className="btn btn-accent group">
+                See selected work
+                <FiArrowUpRight
+                  aria-hidden="true"
+                  className="text-base transition-transform duration-500 group-hover:rotate-45"
+                />
+              </a>
+            </Magnetic>
+            <a href={profile.resume} download className="btn btn-ghost group">
+              <FiDownload
+                aria-hidden="true"
+                className="text-muted transition-colors"
+              />{" "}
+              Résumé
+            </a>
+            <a
+              href={profile.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-ghost w-12 px-0 max-[380px]:hidden"
+              aria-label="Shivam on GitHub (opens in a new tab)"
+            >
+              <FiGithub className="text-lg" aria-hidden="true" />
+            </a>
+          </motion.div>
+        </div>
+      </div>
+
+      <motion.div
+        {...enter(0.8)}
+        className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-10"
+      >
+        <div className="flex flex-wrap items-center justify-between gap-x-8 gap-y-4 border-t border-line py-5">
+          <p className="label flex flex-wrap items-center gap-x-3 gap-y-2 text-muted">
+            {strip.map(([value, label], i) => (
+              <span key={label} className="flex items-center gap-3">
+                {i > 0 && (
+                  <span aria-hidden="true" className="text-signal">
+                    ·
+                  </span>
+                )}
+                <span>
+                  <span className="text-text">{value}</span> {label}
+                </span>
+              </span>
+            ))}
+          </p>
+          <a
+            href="#about"
+            className="label group hidden items-center gap-3 text-muted transition-colors hover:text-signal sm:flex"
+          >
+            <span
+              className="relative h-8 w-px overflow-hidden bg-line-strong"
+              aria-hidden="true"
+            >
+              <span className="scroll-line absolute inset-x-0 top-0 h-3 bg-signal" />
+            </span>
+            Scroll to discover
+            <FiArrowDownRight
+              aria-hidden="true"
+              className="transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5"
+            />
+          </a>
+        </div>
+      </motion.div>
+    </section>
+  );
+}

@@ -1,40 +1,57 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Shivam Kumar — Full-Stack Developer</title>
+    <meta name="description" content="Shivam Kumar is a full-stack (MERN) developer and MCA student at Banaras Hindu University, building responsive React interfaces, REST APIs and Node.js + MongoDB backends." />
+    <meta name="author" content="Shivam Kumar" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#0b0c1c" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f6f3ee" media="(prefers-color-scheme: light)" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Open Graph / Twitter (add og:image + og:url once the site has a domain) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Shivam Kumar — Full-Stack Developer" />
+    <meta property="og:description" content="Full-stack (MERN) developer building responsive interfaces, REST APIs and Node.js + MongoDB backends." />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Shivam Kumar — Full-Stack Developer" />
+    <meta name="twitter:description" content="Full-stack (MERN) developer building responsive interfaces, REST APIs and Node.js + MongoDB backends." />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Shivam Kumar",
+        "jobTitle": "Full-Stack Developer",
+        "email": "mailto:shivam2593479@gmail.com",
+        "alumniOf": ["Banaras Hindu University", "Signa Institute of Professional Studies"],
+        "sameAs": ["https://github.com/shivam0-1", "https://www.linkedin.com/in/shivam---kumar"]
+      }
+    </script>
+
+    <!-- Apply the saved / system theme before first paint to avoid a flash -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem("theme");
+          var theme = saved === "light" ? "light" : "dark";
+          document.documentElement.dataset.theme = theme;
+        } catch (e) {}
+      })();
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#05050a" />
-
-    <title>Shivam Kumar | MERN Stack Developer</title>
-    <meta name="description" content="Shivam Kumar — MERN Stack Developer specializing in React.js, Node.js, Express.js and MongoDB. Explore projects, experience and skills." />
-    <meta name="keywords" content="Shivam Kumar, MERN Stack Developer, React Developer, Node.js Developer, Portfolio" />
-    <meta name="author" content="Shivam Kumar" />
-    <meta name="robots" content="index, follow" />
-
-    <!-- Open Graph -->
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="Shivam Kumar | MERN Stack Developer" />
-    <meta property="og:description" content="Portfolio of Shivam Kumar — MERN Stack Developer. React.js, Node.js, Express.js, MongoDB." />
-    <meta property="og:image" content="/og-image.png" />
-
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Shivam Kumar | MERN Stack Developer" />
-    <meta name="twitter:description" content="Portfolio of Shivam Kumar — MERN Stack Developer." />
-    <meta name="twitter:image" content="/og-image.png" />
-
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   </head>
   <body>
+    <noscript>Shivam Kumar — Full-Stack Developer. Email: shivam2593479@gmail.com</noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

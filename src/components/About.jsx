@@ -1,315 +1,201 @@
-import { motion } from "framer-motion";
-import {
-  FiArrowUpRight,
-} from "react-icons/fi";
+import { useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { FiArrowUpRight, FiPlus } from "react-icons/fi";
+import SectionHeader from "./ui/SectionHeader";
+import Reveal from "./ui/Reveal";
+import Accent from "./ui/Accent";
+import CountUp from "./ui/CountUp";
+import ScrollText from "./ui/ScrollText";
+import { journey, projects, sectionIndex, stackLayers } from "../data/portfolio";
 
-const metrics = [
+const stats = [
+  { label: "Internships", value: journey.filter((j) => j.lane === "work").length },
+  { label: "Live projects", value: projects.length },
+  { label: "Technologies", value: stackLayers.reduce((n, l) => n + l.skills.length, 0) },
+  { label: "MCA CGPA", value: 7.85, decimals: 2, suffix: "/10" },
+];
+
+const facts = [
+  ["Role", "Full Stack Intern, Venuebook Hospitality & Events"],
+  ["Studying", "MCA, Banaras Hindu University"],
+  ["Stack", "MERN (MongoDB, Express, React, Node.js), Next.js and TypeScript"],
+  ["Focus", "Responsive UI, reusable components, REST APIs"],
+  ["Status", "Open to opportunities"],
+];
+
+const principles = [
   {
-    value: "8+",
-    label: "Projects Built",
+    title: "Components first",
+    body: "I break interfaces into reusable pieces before writing pages, so the next feature is assembled, not rebuilt.",
   },
   {
-    value: "150+",
-    label: "Students Mentored",
+    title: "Responsive by default",
+    body: "Every layout I ship is designed for the phone and the desktop at the same time — not shrunk down afterwards.",
   },
   {
-    value: "1+",
-    label: "Years Learning",
-  },
-  {
-    value: "MERN",
-    label: "Certified",
+    title: "Own it end to end",
+    body: "I like following a feature all the way through: the screen, the API it calls, and the data model behind it.",
   },
 ];
 
-const technologies = [
-  "React",
-  "JavaScript",
-  "Tailwind",
-  "Node.js",
-  "Express",
-  "MongoDB",
-];
-
-const About = () => {
+// One open at a time; works with mouse, touch and keyboard.
+const Principles = () => {
+  const [open, setOpen] = useState(0);
+  const reduced = useReducedMotion();
   return (
-    <section
-      id="about"
-      className="relative overflow-hidden py-32 px-6"
-    >
-      {/* Background Text */}
-      {/* <h2
-        className="
-        pointer-events-none
-        absolute
-        left-1/2
-        top-20
-        -translate-x-1/2
-        text-[120px]
-        font-black
-        tracking-[20px]
-        text-white/[0.03]
-        md:text-[220px]
-      "
-      >
-        ABOUT
-      </h2> */}
-
-      {/* Glow */}
-      <div className="absolute left-0 top-0 h-125 w-125 rounded-full bg-cyan-500/10 blur-[150px]" />
-
-      <div className="absolute right-0 bottom-0 h-125 w-125 rounded-full bg-purple-500/10 blur-[150px]" />
-
-      <div className="relative z-10 mx-auto max-w-7xl">
-        <div className="grid gap-16 lg:grid-cols-[420px_1fr]">
-          {/* LEFT PANEL */}
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: 40,
-            }}
-            whileInView={{
-              opacity: 1,
-              y: 0,
-            }}
-            viewport={{
-              once: true,
-            }}
-            className="
-              relative
-              overflow-hidden
-              rounded-[40px]
-              border
-              border-white/10
-              bg-white/3
-              p-10
-              backdrop-blur-2xl
-            "
-          >
-            {/* Glow Orb */}
-            <motion.div
-              animate={{
-                scale: [1, 1.15, 1],
-              }}
-              transition={{
-                duration: 5,
-                repeat: Infinity,
-              }}
-              className="
-                absolute
-                -right-20
-                -top-20
-                h-62.5
-                w-62.5
-                rounded-full
-                bg-linear-to-br
-                from-cyan-500/20
-                to-purple-500/20
-                blur-[100px]
-              "
-            />
-
-            {/* Avatar */}
-            <div
-              className="
-                flex
-                h-28
-                w-28
-                items-center
-                justify-center
-                rounded-4xl
-                bg-gradient-to-br
-                from-cyan-500
-                via-blue-500
-                to-purple-600
-                text-4xl
-                font-black
-              "
-            >
-              SK
-            </div>
-
-            <h3 className="mt-8 text-4xl font-bold">
-              Shivam Kumar
-            </h3>
-
-            <p className="mt-2 text-zinc-400">
-              MERN Stack Developer
-            </p>
-
-            <p className="mt-8 leading-8 text-zinc-300">
-              Passionate about building modern,
-              performant and visually polished digital
-              experiences. I enjoy transforming ideas
-              into scalable products and continuously
-              exploring new technologies.
-            </p>
-
-            {/* Status */}
-            <div
-              className="
-                mt-10
-                inline-flex
-                items-center
-                gap-3
-                rounded-full
-                border
-                border-emerald-500/20
-                bg-emerald-500/10
-                px-5
-                py-3
-              "
-            >
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-
-              <span className="text-sm text-emerald-300">
-                Open to opportunities
-              </span>
-            </div>
-
-            {/* Tech Stack */}
-            <div className="mt-12 flex flex-wrap gap-3">
-              {technologies.map((tech) => (
-                <div
-                  key={tech}
-                  className="
-                    rounded-full
-                    border
-                    border-white/10
-                    bg-black/20
-                    px-4
-                    py-2
-                    text-sm
-                    text-zinc-400
-                  "
-                >
-                  {tech}
-                </div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* RIGHT SIDE */}
-          <div className="space-y-6">
-            {/* Heading */}
-            <div>
-              <span className="text-cyan-400">
-                // ABOUT ME
-              </span>
-
-              <h2 className="mt-4 text-5xl font-bold leading-tight">
-                Building experiences,
-                <br />
-
-                <span
-                  className="
-                    bg-gradient-to-r
-                    from-cyan-400
-                    via-purple-400
-                    to-pink-500
-                    bg-clip-text
-                    text-transparent
-                  "
-                >
-                  not just websites.
-                </span>
-              </h2>
-            </div>
-
-            {/* Bento Metrics */}
-            <div className="grid gap-5 md:grid-cols-2">
-              {metrics.map((item) => (
-                <motion.div
-                  key={item.label}
-                  whileHover={{
-                    y: -8,
-                  }}
-                  className="
-                    rounded-[30px]
-                    border
-                    border-white/10
-                    bg-white/[0.03]
-                    p-8
-                    backdrop-blur-xl
-                  "
-                >
-                  <h3 className="text-5xl font-black text-cyan-400">
-                    {item.value}
-                  </h3>
-
-                  <p className="mt-3 text-zinc-500">
-                    {item.label}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
-
-            {/* Story Card */}
-            <motion.div
-              whileHover={{
-                y: -6,
-              }}
-              className="
-                rounded-[30px]
-                border
-                border-white/10
-                bg-white/[0.03]
-                p-8
-                backdrop-blur-xl
-              "
-            >
-              <div className="flex items-start justify-between">
-                <div>
-                  <span className="text-cyan-400">
-                    MY JOURNEY
-                  </span>
-
-                  <h3 className="mt-3 text-2xl font-bold">
-                    From Teaching to Building Products
-                  </h3>
-                </div>
-
-                <FiArrowUpRight
-                  size={28}
-                  className="text-zinc-600"
-                />
-              </div>
-
-              <p className="mt-6 leading-8 text-zinc-400">
-                I started by teaching programming and
-                data structures to students, which
-                sharpened my communication and
-                problem-solving skills. Today, I use
-                those same skills to create modern,
-                user-focused web applications using the
-                MERN stack.
-              </p>
-            </motion.div>
-
-            {/* Large Quote */}
-            <div className="pt-8">
-              <p
-                className="
-                  text-3xl
-                  font-light
-                  leading-relaxed
-                  text-zinc-300
-                "
+    <ul className="mt-6 border-b border-line">
+      {principles.map((p, i) => {
+        const isOpen = open === i;
+        return (
+          <li key={p.title} className="border-t border-line">
+            <h3>
+              <button
+                type="button"
+                aria-expanded={isOpen}
+                aria-controls={`principle-${i}`}
+                onClick={() => setOpen(isOpen ? -1 : i)}
+                className="group flex w-full items-center justify-between gap-6 py-7 text-left"
               >
-                “I don't just build interfaces —
-                <span className="text-cyan-400">
-                  {" "}
-                  I create experiences people enjoy
-                  using.
+                <span
+                  className={`flex items-baseline text-2xl font-extrabold tracking-[-0.05em] transition-[color,translate] duration-500 sm:text-5xl ${
+                    isOpen ? "text-text" : "text-muted group-hover:translate-x-2 group-hover:text-text"
+                  }`}
+                >
+                  <span className="label mr-5 font-normal tracking-[0.12em] text-signal sm:mr-10">0{i + 1}</span>
+                  {p.title}
                 </span>
-                ”
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+                <span
+                  className={`grid h-11 w-11 shrink-0 place-items-center rounded-full border transition-all duration-500 ${
+                    isOpen ? "rotate-45 border-signal bg-signal text-signal-ink" : "border-line-strong group-hover:border-text"
+                  }`}
+                >
+                  <FiPlus aria-hidden="true" />
+                </span>
+              </button>
+            </h3>
+            <AnimatePresence initial={false}>
+              {isOpen && (
+                <motion.div
+                  id={`principle-${i}`}
+                  initial={reduced ? false : { height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: reduced ? 0 : 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  className="overflow-hidden"
+                >
+                  <p className="max-w-2xl pb-9 text-lg leading-relaxed text-muted sm:pl-[4.5rem]">{p.body}</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </li>
+        );
+      })}
+    </ul>
   );
 };
+
+const About = () => (
+  <section id="about" aria-labelledby="about-title" className="mx-auto max-w-7xl px-4 py-28 sm:px-6 md:py-40 lg:px-10">
+    <SectionHeader
+      id="about-title"
+      index={sectionIndex("about")}
+      label="About"
+      note="A bit about me"
+      title={
+        <>
+          I like knowing how the <Accent>whole thing</Accent> works.
+        </>
+      }
+    />
+
+    <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+      <div className="space-y-6 text-lg leading-relaxed text-muted lg:col-span-7">
+        <Reveal className="label mb-8 flex items-center gap-3 text-signal">
+          <span className="h-px w-10 bg-signal" aria-hidden="true" /> The person behind the code
+        </Reveal>
+        <Reveal as="p" className="text-xl leading-relaxed sm:text-2xl">
+          I’m <span className="text-text">Shivam</span>, a full-stack developer and MCA student at Banaras Hindu
+          University.
+        </Reveal>
+        <Reveal as="p" delay={0.05}>
+          I started on the frontend, building responsive layouts with React and Tailwind, and kept following the
+          request further down the stack, into Node.js services and MongoDB models.
+        </Reveal>
+        <Reveal as="p" delay={0.1}>
+          Today I’m a Full Stack Intern at Venuebook, where I build reusable React components, integrate REST APIs
+          and work on the backend services behind them. Alongside that I build projects like{" "}
+          <a href="#work" className="text-text underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-signal">
+            RozgarWala
+          </a>
+          , a hiring platform for rural workers.
+        </Reveal>
+      </div>
+
+      <Reveal delay={0.1} className="lg:col-span-5">
+        <div className="ticket overflow-hidden rounded-2xl">
+          <div className="label flex items-center justify-between border-b border-line px-6 py-4 text-muted">
+            <span>developer.profile</span>
+            <span className="flex items-center gap-2 text-signal">
+              <span className="status-light" aria-hidden="true" /> Open to work
+            </span>
+          </div>
+          <dl className="divide-y divide-line px-6 text-sm">
+            {facts.map(([k, v]) => (
+              <div key={k} className="grid grid-cols-[5rem_1fr] gap-3 py-4">
+                <dt className="label pt-0.5 text-muted">{k}</dt>
+                <dd className="leading-relaxed">{v}</dd>
+              </div>
+            ))}
+          </dl>
+          <a
+            href="#contact"
+            className="group flex items-center justify-between border-t border-line px-6 py-4 font-mono text-[13px] transition-colors hover:bg-signal hover:text-signal-ink"
+          >
+            Let’s make something useful
+            <FiArrowUpRight className="transition-transform duration-500 group-hover:rotate-45" aria-hidden="true" />
+          </a>
+        </div>
+      </Reveal>
+    </div>
+
+    {/* Numbers that can all be checked against the résumé */}
+    <dl className="mt-24 grid grid-cols-2 border-t border-line lg:grid-cols-4">
+      {stats.map((s, i) => (
+        <Reveal
+          key={s.label}
+          delay={i * 0.08}
+          className={`group border-b border-line py-8 pr-4 lg:border-b-0 ${i % 2 ? "pl-6" : ""} ${i > 0 ? "lg:border-l lg:pl-8" : ""} ${
+            i % 2 ? "border-l" : ""
+          }`}
+        >
+          <dt className="label text-muted">
+            <span className="mr-2 text-signal">0{i + 1}</span>
+            {s.label}
+          </dt>
+          <dd className="display mt-5 flex flex-wrap items-baseline gap-x-1 text-5xl sm:text-7xl">
+            <CountUp value={s.value} decimals={s.decimals} className="transition-colors duration-500 group-hover:text-signal" />
+            {s.suffix && <span className="font-mono text-base font-normal tracking-normal text-muted sm:text-xl">{s.suffix}</span>}
+          </dd>
+        </Reveal>
+      ))}
+    </dl>
+
+    <div className="relative mt-28 md:mt-40">
+      <span aria-hidden="true" className="label mb-8 flex items-center gap-3 text-signal">
+        <span className="h-px w-10 bg-signal" /> Why I build
+      </span>
+      <ScrollText
+        text="What keeps me hooked is the moment an idea stops being a sketch and becomes something people can actually use."
+        accent={["sketch", "use"]}
+        className="display max-w-6xl text-[clamp(1.9rem,1rem+3.6vw,4.6rem)] leading-[1.08]"
+      />
+    </div>
+
+    <Reveal className="mt-28 md:mt-40">
+      <p className="label text-muted">Operating principles / How I like to work</p>
+    </Reveal>
+    <Principles />
+  </section>
+);
 
 export default About;

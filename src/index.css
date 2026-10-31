@@ -1,101 +1,475 @@
 @import "tailwindcss";
 
-/* @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap'); */
+/* ---------------------------------------------------------------
+   Design tokens. Components only ever use the semantic Tailwind
+   colours below (bg, surface, line, text, muted, signal, warm),
+   so both themes come from swapping these variables.
+   Dark: deep ink navy with an ember accent. Light: warm paper.
+---------------------------------------------------------------- */
+:root,
+[data-theme="dark"] {
+  --bg: #0b0c1c;
+  --bg-raised: #10112a;
+  --surface: #15162f;
+  --line: #23243f;
+  --line-strong: #363859;
+  --text: #f4f1ea;
+  --muted: #a3a1b3;
+  --signal: #ff6a3d;
+  --signal-ink: #0b0c1c;
+  --warm: #ffc45c;
+  --grid-dot: rgb(255 255 255 / 0.05);
+  --glass-from: rgb(255 255 255 / 0.07);
+  --glass-to: rgb(255 255 255 / 0.02);
+  /* Syntax colours for the code editors */
+  --syn-kw: #ff8a5f;
+  --syn-tag: #ffc45c;
+  --syn-attr: #8ab4ff;
+  --syn-str: #f4d58d;
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --bg: #f6f3ee;
+  --bg-raised: #efebe4;
+  --surface: #ffffff;
+  --line: #e2ddd3;
+  --line-strong: #cbc5b8;
+  --text: #13132a;
+  --muted: #5d5b6b;
+  --signal: #c23a0a;
+  --signal-ink: #ffffff;
+  --warm: #9a5b00;
+  --grid-dot: rgb(0 0 0 / 0.06);
+  --glass-from: rgb(255 255 255 / 0.85);
+  --glass-to: rgb(255 255 255 / 0.55);
+  --syn-kw: #c23a0a;
+  --syn-tag: #9a5b00;
+  --syn-attr: #1d4ed8;
+  --syn-str: #7c4a03;
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-raised: var(--bg-raised);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-signal: var(--signal);
+  --color-signal-ink: var(--signal-ink);
+  --color-warm: var(--warm);
+
+  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-display: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
 
 @theme {
-  /* Core palette — near-black base, purple/blue accents */
-  --color-bg: #05050a;
-  --color-surface: #0d0d16;
-  --color-border: #1c1c2b;
-  --color-text: #e7e7ef;
-  --color-muted: #8b8b9e;
-  --color-primary: #7c3aed;
-  --color-primary-light: #a78bfa;
-  --color-secondary: #3b82f6;
-  --color-accent: #22d3ee;
-
-  --font-display: "Space Grotesk", sans-serif;
-  --font-body: "Inter", sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
+  /* Fluid type scale */
+  --text-display: clamp(2.9rem, 1.2rem + 6.6vw, 7.25rem);
+  --text-heading: clamp(2.1rem, 1.3rem + 3.3vw, 4.4rem);
+  --text-lede: clamp(1.25rem, 1.05rem + 0.9vw, 1.9rem);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
-html {
-  scroll-behavior: smooth;
-}
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scrollbar-gutter: stable;
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
+  }
 
-body {
-  background-color: var(--color-bg);
-  color: var(--color-text);
-  font-family: var(--font-body);
-  overflow-x: hidden;
-}
+  /* Lenis drives scrolling once it starts; native smooth scrolling would fight it. */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: clip;
+  }
 
-/* Glassmorphism panel */
-.glass {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
+  body {
+    background-color: var(--bg);
+    /* Two faint ember washes from the top corners give the page depth without images. */
+    background-image:
+      radial-gradient(1200px 640px at 100% -10%, color-mix(in oklab, var(--signal) 9%, transparent), transparent 60%),
+      radial-gradient(900px 520px at -10% 0, color-mix(in oklab, var(--signal) 5%, transparent), transparent 55%);
+    background-repeat: no-repeat;
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
 
-/* Gradient text used for headings/accents */
-.gradient-text {
-  background: linear-gradient(90deg, var(--color-primary-light), var(--color-accent));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
 
-/* Subtle gradient border glow, used on hover for cards/buttons */
-.glow-on-hover {
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
-}
-.glow-on-hover:hover {
-  box-shadow: 0 0 24px rgba(124, 58, 237, 0.35);
-  transform: translateY(-4px);
-}
+  button:not(:disabled), a {
+    -webkit-tap-highlight-color: transparent;
+  }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: var(--color-bg);
-}
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--color-primary), var(--color-secondary));
-  border-radius: 8px;
-}
+  button:not(:disabled) {
+    cursor: pointer;
+  }
 
-/* Text selection */
-::selection {
-  background: var(--color-primary);
-  color: white;
-}
+  ::selection {
+    background: var(--signal);
+    color: var(--signal-ink);
+  }
 
-/* Respect reduced motion preference */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
+  :focus-visible {
+    outline: 2px solid var(--signal);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  main:focus, section[tabindex="-1"]:focus {
+    outline: none;
   }
 }
 
-html,
-body,
-a,
-button {
-  cursor: none;
-}
-* {
-  cursor: none;
+@layer components {
+  /* Heavy monospace display type, tightly tracked */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -0.055em;
+    line-height: 0.95;
+  }
+
+  /* Small uppercase mono labels used for eyebrows, meta and section names */
+  .label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1.4;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* Frosted panel for cards, forms and the profile ticket */
+  .ticket {
+    position: relative;
+    border: 1px solid var(--line);
+    background: linear-gradient(135deg, var(--glass-from), var(--glass-to));
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    backdrop-filter: blur(24px) saturate(150%);
+  }
+
+  /* Pill buttons. A fill rises from below on hover. */
+  .btn {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    height: 3rem;
+    padding: 0 1.4rem;
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    transition: color 0.35s var(--ease-out-expo), border-color 0.35s var(--ease-out-expo), transform 0.14s var(--ease-out-expo);
+  }
+  .btn:active {
+    transform: scale(0.97);
+  }
+  .btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    transform: translateY(101%);
+    transition: transform 0.5s var(--ease-out-expo);
+  }
+  .btn:hover::before {
+    transform: translateY(0);
+  }
+  .btn-accent {
+    background: var(--signal);
+    color: var(--signal-ink);
+  }
+  .btn-accent::before {
+    background: var(--text);
+  }
+  .btn-accent:hover {
+    color: var(--bg);
+  }
+  .btn-ghost {
+    border: 1px solid var(--line-strong);
+    color: var(--text);
+  }
+  .btn-ghost::before {
+    background: var(--text);
+  }
+  .btn-ghost:hover {
+    color: var(--bg);
+    border-color: var(--text);
+  }
+  .btn-ghost:hover svg {
+    color: inherit;
+  }
+  .btn:disabled {
+    opacity: 0.6;
+  }
+  .btn:disabled::before {
+    display: none;
+  }
+
+  /* Faint dot grid used behind panels */
+  .dot-grid {
+    background-image: radial-gradient(var(--grid-dot) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+
+  /* Card that lights up under the pointer (see trackSpotlight) */
+  .spotlight {
+    position: relative;
+    isolation: isolate;
+  }
+  .spotlight::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: radial-gradient(
+      460px circle at var(--mx, 50%) var(--my, -20%),
+      color-mix(in oklab, var(--signal) 10%, transparent),
+      transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .spotlight:hover::before {
+    opacity: 1;
+  }
+
+  /* A soft band of light sweeps across primary buttons on hover */
+  .shine {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .shine::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(110deg, transparent 30%, rgb(255 255 255 / 0.45) 50%, transparent 70%);
+    transform: translateX(-120%);
+    transition: transform 0.7s var(--ease-out-expo);
+  }
+  .shine:hover::after {
+    transform: translateX(120%);
+  }
+
+  /* Gentle colour wash for backgrounds */
+  .glow {
+    background: radial-gradient(
+      closest-side,
+      color-mix(in oklab, var(--signal) 14%, transparent),
+      transparent
+    );
+  }
+
+  /* Hollow display type for alternating marquee words */
+  .text-outline {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--muted);
+  }
+  @supports not (-webkit-text-stroke: 1px black) {
+    .text-outline {
+      color: var(--muted);
+    }
+  }
+
+  /* Underline that draws in from the left on hover */
+  .link-draw {
+    background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0 1px;
+    transition: background-size 0.5s var(--ease-out-expo);
+  }
+  .link-draw:hover,
+  .link-draw:focus-visible {
+    background-size: 100% 1px;
+  }
 }
 
-body {
-  overflow-x: hidden;
+/* ---------------------------------------------------------------- Hero */
+.hero-section {
+  min-height: 100svh;
+}
+.hero-canvas {
+  mask-image: radial-gradient(ellipse 85% 80% at 50% 50%, black 55%, transparent 100%);
+}
+@media (max-width: 1023px) {
+  .hero-canvas {
+    opacity: 0.55;
+    mask-image: linear-gradient(to bottom, black 40%, transparent 85%);
+  }
+}
+.status-light {
+  position: relative;
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--signal);
+}
+.status-light::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--signal);
+  animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@keyframes ping {
+  75%, 100% {
+    transform: scale(3);
+    opacity: 0;
+  }
 }
 
-::selection {
-  background: #22d3ee;
-  color: black;
+/* ---------------------------------------------------------------- Request demo (Process) */
+.workspace-panel {
+  background: linear-gradient(135deg, color-mix(in oklab, var(--surface) 94%, transparent), var(--bg-raised));
+  box-shadow: 0 24px 80px -35px rgb(0 0 0 / 0.65), inset 0 1px 0 rgb(255 255 255 / 0.03);
+}
+.glass-window {
+  border: 1px solid var(--line-strong);
+  background: linear-gradient(160deg, color-mix(in oklab, var(--surface) 92%, white 3%), var(--bg-raised));
+  box-shadow: 0 30px 70px -28px rgb(0 0 0 / 0.65), inset 0 1px 0 rgb(255 255 255 / 0.05);
+}
+[data-theme="light"] .glass-window {
+  box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.25), inset 0 1px 0 rgb(255 255 255 / 0.7);
+}
+.scene-skeleton {
+  aspect-ratio: 560 / 500;
+}
+/* `translate` composes with Framer's `transform`, so floating never fights the 3D depth */
+.scene-float {
+  animation: scene-float 7s ease-in-out infinite;
+  animation-play-state: paused;
+}
+.scene-live .scene-float {
+  animation-play-state: running;
+}
+@keyframes scene-float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -7px; }
+}
+
+/* Film grain over the whole page: adds tactile depth without images */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: var(--grain, 0.03);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+[data-theme="light"] {
+  --grain: 0.07;
+}
+
+/* Editor-style scrollbar: thin, quiet, lights up on hover */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border: 3px solid var(--bg);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--signal);
+}
+
+/* Theme switch: the new theme is clipped into a growing circle (see useTheme) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Infinite marquee: the track holds two copies of the content */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.ticker-track {
+  animation: marquee 40s linear infinite;
+}
+.ticker:hover .ticker-track {
+  animation-play-state: paused;
+}
+
+@keyframes float-cue {
+  50% {
+    transform: translateY(6px);
+  }
+}
+.float-cue {
+  animation: float-cue 2s ease-in-out infinite;
+}
+
+/* A drop of light that runs down the hero's scroll cue */
+@keyframes scroll-line {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(300%); }
+}
+.scroll-line {
+  animation: scroll-line 1.8s var(--ease-in-out-quart) infinite;
+}
+
+/* Schematic connector lines draw themselves in */
+@keyframes dash {
+  to {
+    stroke-dashoffset: -16;
+  }
+}
+.flow-line {
+  stroke-dasharray: 4 4;
+  animation: dash 1.2s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

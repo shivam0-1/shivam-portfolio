@@ -1,347 +1,206 @@
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { FiArrowUpRight, FiCode, FiDatabase, FiLayers, FiServer, FiTool } from "react-icons/fi";
+import { sectionIndex, sources, stackLayers } from "../data/portfolio";
+import { techIcons } from "../data/techIcons";
+import SectionHeader from "./ui/SectionHeader";
+import Reveal from "./ui/Reveal";
+import Accent from "./ui/Accent";
 
-import {
-  SiReact,
-  SiJavascript,
-  SiHtml5,
-  SiCss,
-  SiBootstrap,
-  SiTailwindcss,
-  SiNodedotjs,
-  SiExpress,
-  SiJsonwebtokens,
-  SiMongodb,
-  SiMysql,
-  SiGit,
-  SiGithub,
-} from "react-icons/si";
+const allSkills = stackLayers.flatMap((l) => l.skills.map((s) => ({ ...s, layer: l.label })));
+const filters = ["Everything", ...Object.values(sources)];
+const layerIcons = { frontend: FiLayers, backend: FiServer, databases: FiDatabase, languages: FiCode, tools: FiTool };
+// "Most used" comes from the data: the skills that show up in the most projects and roles.
+const mostUsed = [...allSkills].sort((a, b) => b.usedIn.length - a.usedIn.length).slice(0, 3);
 
-import { FiShield, FiCode, FiDatabase, FiTool } from "react-icons/fi";
-
-const skillGroups = [
-  {
-    id: "01",
-    title: "Frontend",
-    icon: <FiCode />,
-    color: "from-cyan-500 to-sky-500",
-
-    skills: [
-      {
-        name: "React.js",
-        icon: <SiReact />,
-        level: "Advanced",
-      },
-      {
-        name: "JavaScript",
-        icon: <SiJavascript />,
-        level: "Advanced",
-      },
-      {
-        name: "HTML5",
-        icon: <SiHtml5 />,
-        level: "Advanced",
-      },
-      {
-        name: "CSS3",
-        icon: <SiCss />,
-        level: "Advanced",
-      },
-      {
-        name: "Tailwind CSS",
-        icon: <SiTailwindcss />,
-        level: "Advanced",
-      },
-      {
-        name: "Bootstrap",
-        icon: <SiBootstrap />,
-        level: "Intermediate",
-      },
-    ],
-  },
-
-  {
-    id: "02",
-    title: "Backend",
-    icon: <FiShield />,
-    color: "from-emerald-500 to-green-500",
-
-    skills: [
-      {
-        name: "Node.js",
-        icon: <SiNodedotjs />,
-        level: "Intermediate",
-      },
-      {
-        name: "Express.js",
-        icon: <SiExpress />,
-        level: "Intermediate",
-      },
-      {
-        name: "REST APIs",
-        icon: <FiShield />,
-        level: "Advanced",
-      },
-      {
-        name: "JWT",
-        icon: <SiJsonwebtokens />,
-        level: "Advanced",
-      },
-      {
-        name: "Passport.js",
-        icon: <FiShield />,
-        level: "Intermediate",
-      },
-    ],
-  },
-
-  {
-    id: "03",
-    title: "Database",
-    icon: <FiDatabase />,
-    color: "from-orange-500 to-yellow-500",
-
-    skills: [
-      {
-        name: "MongoDB",
-        icon: <SiMongodb />,
-        level: "Advanced",
-      },
-      {
-        name: "MySQL",
-        icon: <SiMysql />,
-        level: "Intermediate",
-      },
-    ],
-  },
-
-  {
-    id: "04",
-    title: "Tools",
-    icon: <FiTool />,
-    color: "from-violet-500 to-fuchsia-500",
-
-    skills: [
-      {
-        name: "Git",
-        icon: <SiGit />,
-        level: "Advanced",
-      },
-      {
-        name: "GitHub",
-        icon: <SiGithub />,
-        level: "Advanced",
-      },
-    ],
-  },
-];
-const cardVariants = {
-  hidden: {
-    opacity: 0,
-    y: 50,
-  },
-  visible: (index) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: index * 0.15,
-      duration: 0.6,
-      ease: "easeOut",
-    },
-  }),
+const TechIcon = ({ name, className = "" }) => {
+  const Icon = techIcons[name];
+  return Icon ? <Icon aria-hidden="true" className={`shrink-0 ${className}`} /> : null;
 };
 
-const chipVariants = {
-  hidden: {
-    opacity: 0,
-    scale: 0.9,
-  },
-  visible: (index) => ({
-    opacity: 1,
-    scale: 1,
-    transition: {
-      delay: index * 0.05,
-      duration: 0.35,
-    },
-  }),
-};
-
+// Two ways in: pick a skill to see where it was used, or pick a project to light up its skills.
 const Skills = () => {
+  const [selected, setSelected] = useState("React.js");
+  const [filter, setFilter] = useState("Everything");
+  const skill = allSkills.find((s) => s.name === selected);
+  const matches = (s) => filter === "Everything" || s.usedIn.includes(filter);
+  const matchCount = allSkills.filter(matches).length;
+
   return (
-    <section
-      id="skills"
-      className="relative overflow-hidden py-32 px-6 bg-[#050816]"
-    >
-      {/* Background Blur */}
-      <div className="absolute -top-40 -left-40 h-96 w-96 rounded-full bg-cyan-500/10 blur-[120px]" />
-
-      <div className="absolute top-1/2 -right-40 h-[450px] w-[450px] rounded-full bg-violet-500/10 blur-[140px]" />
-
-      <div className="absolute bottom-0 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-blue-500/10 blur-[120px]" />
-
-      <div className="relative max-w-7xl mx-auto">
-        <motion.div
-          variants={cardVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="mb-20 text-center"
+    <section id="stack" aria-labelledby="stack-title" className="border-y border-line bg-raised/50">
+      <div className="mx-auto max-w-7xl px-4 py-28 sm:px-6 md:py-40 lg:px-10">
+        <SectionHeader
+          id="stack-title"
+          index={sectionIndex("stack")}
+          label="Skills"
+          note="What I work with"
+          title={
+            <>
+              A stack, layer by layer — <Accent className="text-muted">and where I’ve used it.</Accent>
+            </>
+          }
         >
-          <span className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-5 py-2 text-xs uppercase tracking-[0.3em] text-cyan-300">
-            Technology Stack
-          </span>
+          Pick a technology to see where it shows up in my work — or pick a project to see what it was built with.
+        </SectionHeader>
 
-          <h2 className="mt-6 text-5xl md:text-6xl font-black leading-tight text-white">
-            Crafting Modern
-            <br />
-            <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-violet-400 bg-clip-text text-transparent">
-              Digital Experiences
-            </span>
-          </h2>
-
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-gray-400">
-            My toolbox is carefully selected to build scalable, responsive and
-            high-performance web applications with exceptional user experiences.
+        {/* Project filter */}
+        <Reveal className="ticket mb-8 rounded-2xl p-5 sm:p-6">
+          <p id="filter-label" className="mb-4 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+            Explore by project or experience
           </p>
-        </motion.div>
+          <div role="group" aria-labelledby="filter-label" className="flex flex-wrap gap-2">
+            {filters.map((f) => {
+              const on = f === filter;
+              return (
+                <button
+                  key={f}
+                  type="button"
+                  aria-pressed={on}
+                  onClick={() => setFilter(f)}
+                  className={`rounded-lg border px-4 py-2 text-sm transition-colors ${
+                    on ? "border-signal bg-signal text-signal-ink" : "border-line text-muted hover:border-line-strong hover:bg-surface hover:text-text"
+                  }`}
+                >
+                  {f}
+                </button>
+              );
+            })}
+          </div>
+          <p className="mt-4 flex flex-wrap items-center gap-2 text-sm text-muted">
+            <span>Most used:</span>
+            {mostUsed.map((s) => (
+              <button
+                key={s.name}
+                type="button"
+                onClick={() => setSelected(s.name)}
+                className="inline-flex items-center gap-1.5 rounded-md border border-line px-2 py-1 font-mono text-xs text-text transition-colors hover:border-signal"
+              >
+                <TechIcon name={s.name} className="text-signal" /> {s.name}
+              </button>
+            ))}
+          </p>
+          <p className="mt-3 text-sm text-muted" aria-live="polite">
+            {filter === "Everything"
+              ? `${allSkills.length} technologies in total.`
+              : `${matchCount} ${matchCount === 1 ? "technology" : "technologies"} used in ${filter}.`}
+          </p>
+        </Reveal>
 
-        <div className="grid lg:grid-cols-2 gap-8">
-          {skillGroups.map((group, index) => (
-            <motion.div
-              key={group.title}
-              variants={cardVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              custom={index}
-              viewport={{ once: true }}
-              className="group relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-transparent backdrop-blur-2xl transition-all duration-500 hover:-translate-y-3 hover:border-cyan-400/40 hover:shadow-[0_25px_60px_rgba(34,211,238,0.15)]"
-            >
-              {/* Top Gradient */}
-              <div
-                className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${group.color}`}
-              />
-              <div
-                className={`absolute -right-20 -top-20 h-44 w-44 rounded-full bg-gradient-to-br ${group.color} opacity-10 blur-3xl transition-all duration-700 group-hover:scale-125 group-hover:opacity-25`}
-              />
-              <div className="absolute right-6 top-6 h-2 w-2 rounded-full bg-cyan-300 shadow-[0_0_18px_rgba(34,211,238,0.8)]" />
-
-              <div className="relative p-8">
-                {/* Header */}
-                <div className="flex items-start justify-between">
-                  {/* Left */}
+        <div className="grid gap-8 lg:grid-cols-12">
+          <div className="space-y-3 lg:col-span-8">
+            {stackLayers.map((layer, li) => {
+              const Icon = layerIcons[layer.id];
+              return (
+              <Reveal
+                key={layer.id}
+                delay={li * 0.05}
+                className="ticket group grid gap-5 rounded-2xl p-5 transition-colors hover:border-line-strong sm:grid-cols-[11rem_1fr] sm:items-center sm:p-6"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="relative grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-line bg-surface text-signal">
+                    <Icon aria-hidden="true" />
+                    <span aria-hidden="true" className="absolute -right-1 -top-2 bg-bg px-1 font-mono text-[9px] text-muted">0{li + 1}</span>
+                  </div>
                   <div>
-                    <motion.div
-                      animate={{
-                        y: [0, -6, 0],
-                      }}
-                      transition={{
-                        duration: 4,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                      }}
-                      whileHover={{
-                        rotate: 8,
-                        scale: 1.08,
-                      }}
-                      className={`inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${group.color} text-3xl text-white shadow-xl`}
-                    >
-                      {group.icon}
-                    </motion.div>
-
-                    <h3 className="mt-6 text-2xl font-bold text-white">
-                      {group.title}
-                    </h3>
-
-                    <p className="mt-2 text-gray-400">
-                      {group.title === "Frontend" &&
-                        "Beautiful responsive user interfaces."}
-
-                      {group.title === "Backend" &&
-                        "Scalable server-side architecture."}
-
-                      {group.title === "Database" &&
-                        "Reliable data storage solutions."}
-
-                      {group.title === "Tools" &&
-                        "Development workflow essentials."}
-                    </p>
-                  </div>
-
-                  {/* Right Number */}
-                  <div className="text-7xl font-black text-white/5 transition-all duration-700 group-hover:scale-110 group-hover:text-cyan-300/10">
-                    {group.id}
+                  <h3 className="font-medium">{layer.label}</h3>
+                  <p className="mt-0.5 text-xs text-muted">{layer.note}</p>
                   </div>
                 </div>
-
-                {/* Divider */}
-                <div className="relative my-8 h-px overflow-hidden rounded-full bg-white/10">
-                  <div className="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-cyan-400 via-blue-400 to-transparent transition-all duration-700 group-hover:w-full" />
-                </div>
-
-                {/* Skill Chips */}
-                <div className="space-y-3">
-                  {group.skills.map((skill, skillIndex) => (
-                    <motion.div
-                      key={skill.name}
-                      variants={chipVariants}
-                      initial="hidden"
-                      whileInView="visible"
-                      viewport={{ once: true }}
-                      custom={skillIndex}
-                      whileHover={{
-                        x: 6,
-                      }}
-                      transition={{
-                        type: "spring",
-                        stiffness: 260,
-                        damping: 18,
-                      }}
-                      className="group/skill relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-r from-white/[0.06] via-white/[0.03] to-transparent p-4 transition-all duration-300 hover:border-cyan-400/40 hover:bg-white/[0.05] hover:shadow-[0_10px_30px_rgba(34,211,238,0.15)]"
-                    >
-                      {/* Animated Shine */}
-                      <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover/skill:translate-x-full" />
-
-                      <div className="relative flex items-center justify-between">
-                        {/* Left */}
-                        <div className="flex items-center gap-4">
-                          <div
-                            className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${group.color} text-xl text-white shadow-lg transition-all duration-300 group-hover/skill:rotate-6 group-hover/skill:scale-110`}
-                          >
-                            {skill.icon}
-                          </div>
-
-                          <div>
-                            <h4 className="font-semibold text-white">
-                              {skill.name}
-                            </h4>
-
-                            <p className="text-sm text-gray-500">Technology</p>
-                          </div>
-                        </div>
-
-                        {/* Right */}
-                        <div className="flex items-center gap-3">
-                          <span
-                            className={`rounded-full px-3 py-1 text-xs font-medium ${
-                              skill.level === "Advanced"
-                                ? "bg-emerald-500/15 text-emerald-300"
-                                : "bg-yellow-500/15 text-yellow-300"
-                            }`}
-                          >
-                            {skill.level}
+                <ul className="flex flex-wrap gap-2" aria-label={`${layer.label} technologies`}>
+                  {layer.skills.map((s) => {
+                    const on = s.name === selected;
+                    const lit = matches(s);
+                    return (
+                      <li key={s.name}>
+                        <motion.button
+                          type="button"
+                          aria-pressed={on}
+                          onClick={() => setSelected(s.name)}
+                          animate={{ opacity: lit ? 1 : 0.5, scale: lit ? 1 : 0.98 }}
+                          whileTap={{ scale: 0.94 }}
+                          transition={{ duration: 0.25 }}
+                          className={`relative rounded-lg border px-3.5 py-2 font-mono text-xs transition-colors ${
+                            on ? "border-signal text-signal-ink" : "border-line text-text hover:border-line-strong"
+                          }`}
+                        >
+                          {on && (
+                            <motion.span
+                              layoutId="skill-active"
+                              className="absolute inset-0 rounded-[7px] bg-signal"
+                              transition={{ type: "spring", stiffness: 500, damping: 38 }}
+                            />
+                          )}
+                          <span className="relative flex items-center gap-2">
+                            <TechIcon name={s.name} className={`text-sm ${on ? "" : "text-muted"}`} />
+                            {s.name}
                           </span>
+                        </motion.button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </Reveal>
+            );})}
+          </div>
 
-                          <div className="text-cyan-300 transition-all duration-300 group-hover/skill:translate-x-1">
-                            →
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
+          <div className="lg:col-span-4">
+            <div className="ticket sticky top-24 overflow-hidden rounded-2xl" aria-live="polite">
+              <div className="flex items-center justify-between border-b border-line bg-raised/60 px-6 py-4">
+                <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">In practice</p>
+                <span className="h-1.5 w-1.5 rounded-full bg-signal" aria-hidden="true" />
               </div>
-            </motion.div>
-          ))}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={skill.name}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.2 }}
+                  className="p-6"
+                >
+                  <p className="font-mono text-[10px] uppercase tracking-wider text-muted">Selected technology</p>
+                  <div className="mt-4 flex items-center gap-4">
+                    <motion.span
+                      initial={{ rotate: -20, scale: 0.6 }}
+                      animate={{ rotate: 0, scale: 1 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 16 }}
+                      className="grid h-14 w-14 shrink-0 place-items-center rounded-xl border border-line-strong bg-raised text-3xl text-signal"
+                    >
+                      <TechIcon name={skill.name} />
+                    </motion.span>
+                    <p className="font-display text-3xl font-extrabold tracking-[-0.05em] text-signal">{skill.name}</p>
+                  </div>
+                  <p className="mt-3 text-sm text-muted">
+                    {skill.layer}
+                    {skill.usedIn.length > 0 &&
+                      ` · used in ${skill.usedIn.length} ${skill.usedIn.length === 1 ? "place" : "places"}`}
+                  </p>
+                  {skill.usedIn.length > 0 ? (
+                    <ul className="mt-6 space-y-1">
+                      {skill.usedIn.map((src) => (
+                        <li key={src}>
+                          <button
+                            type="button"
+                            onClick={() => setFilter(src)}
+                            className="group flex w-full items-center gap-3 rounded-lg border border-transparent px-2 py-3 text-left text-sm transition-colors hover:border-line hover:bg-raised"
+                          >
+                            <span className="h-px w-4 bg-signal" aria-hidden="true" />
+                            {src}
+                            <FiArrowUpRight aria-hidden="true" className="ml-auto shrink-0 text-muted transition-colors group-hover:text-signal" />
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="mt-6 text-sm leading-relaxed text-muted">
+                      Part of my toolkit — not yet featured in the projects on this page.
+                    </p>
+                  )}
+                </motion.div>
+              </AnimatePresence>
+              <p className="border-t border-line px-6 py-4 text-xs leading-relaxed text-muted">Select a technology to explore its use across my projects and experience.</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
