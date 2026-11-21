@@ -5,6 +5,7 @@ import { CurrentYear } from "./CurrentYear";
 const links = [
   { label: "GitHub", href: profile.github.url },
   { label: "LinkedIn", href: profile.linkedin.url },
+  { label: "LeetCode", href: profile.leetcode.url },
   { label: "Email", href: `mailto:${profile.email}` },
 ];
 

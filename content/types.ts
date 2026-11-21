@@ -17,6 +17,7 @@ export type Profile = {
   phone: { display: string; href: string };
   github: { url: string; handle: string };
   linkedin: { url: string; handle: string };
+  leetcode: { url: string; handle: string };
   /** Path to the PDF in /public. */
   resume: string;
   /** Shows "Open to opportunities" on the opening screen and the share image. */

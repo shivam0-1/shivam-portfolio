@@ -8,14 +8,19 @@ import { Icon } from "@/components/ui/Icon";
 import { profile, skillGroups } from "@/content/portfolio";
 import { usePrefersReducedMotion } from "@/lib/use-reduced-motion";
 
-// The three glass layers, labelled from the first three skill groups.
-const layers = skillGroups.slice(0, 3).map((group) => ({
-  label: group.label,
-  skills: group.skills
-    .slice(0, 3)
-    .map((s) => s.name)
-    .join(" · "),
-}));
+// The three glass layers: Frontend, Backend and Databases, each labelled with
+// its three most-used skills.
+const layers = ["frontend", "backend", "databases"]
+  .map((id) => skillGroups.find((group) => group.id === id))
+  .filter((group) => group !== undefined)
+  .map((group) => ({
+    label: group.label,
+    skills: [...group.skills]
+      .sort((a, b) => b.usedIn.length - a.usedIn.length)
+      .slice(0, 3)
+      .map((s) => s.name)
+      .join(" · "),
+  }));
 
 const order = (i: number) => ({ "--i": i }) as CSSProperties;
 

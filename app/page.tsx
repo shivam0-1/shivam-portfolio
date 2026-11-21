@@ -19,7 +19,7 @@ const person = {
   email: `mailto:${profile.email}`,
   alumniOf: experience.filter((item) => item.kind === "education").map((item) => item.org),
   knowsAbout: skillGroups.flatMap((group) => group.skills.map((skill) => skill.name)),
-  sameAs: [profile.github.url, profile.linkedin.url],
+  sameAs: [profile.github.url, profile.linkedin.url, profile.leetcode.url],
 };
 
 export default function Home() {

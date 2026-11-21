@@ -7,6 +7,7 @@ import { profile } from "@/content/portfolio";
 const channels = [
   { label: "LinkedIn", value: profile.linkedin.handle, href: profile.linkedin.url, external: true },
   { label: "GitHub", value: profile.github.handle, href: profile.github.url, external: true },
+  { label: "LeetCode", value: profile.leetcode.handle, href: profile.leetcode.url, external: true },
   { label: "Phone", value: profile.phone.display, href: profile.phone.href, external: false },
 ];
 
