@@ -1,50 +1,120 @@
-# Shivam Kumar — Developer Portfolio
+# Shivam Kumar | Portfolio
 
-A responsive React portfolio built with Vite, Tailwind CSS, GSAP (ScrollTrigger), Lenis, and Framer Motion. Deep ink-navy surfaces, an ember accent, and heavy monospace display type (JetBrains Mono) carry the introduction, a scroll-driven request walkthrough, skills, project case studies, experience, and contact form.
+Personal portfolio of Shivam Kumar, full-stack developer. Built with **Next.js 16** (App Router), **TypeScript** and **Tailwind CSS 4**, with **three.js** (via React Three Fiber) for the 3D hero, **Motion** for animation and **Lenis** for smooth scrolling.
 
-Motion is split by job: Lenis provides inertial wheel scrolling on GSAP's ticker, GSAP ScrollTrigger handles scrubbed and pinned scroll effects, and Framer Motion handles state transitions and entrance reveals.
+The design is dark and editorial: a warm near-black page, warm-white type, large Cormorant Garamond headings, Hanken Grotesk body text, and one gold accent used sparingly. The writing is plain and factual. The page opens on three floating glass layers (Frontend, Backend, Database). As you scroll, they spread apart and gain their labels, then hand over to the sections: **Skills, Experience, Work, About, Contact**. A toggle switches to the light "paper" theme.
+
+## Requirements
+
+- Node.js 20.9 or newer
+- npm
 
 ## Run locally
 
 ```sh
-npm ci
-npm run dev
+npm install
+npm run dev        # http://localhost:3000
 ```
 
-Use a Node.js version supported by the installed Vite release (Node 22.12+). To build and inspect the production output:
+Production build:
 
 ```sh
 npm run build
-npm run preview
+npm run start      # serves the production build on http://localhost:3000
 ```
 
-The production site is emitted to `dist/` and can be served by a static host. `npm run lint` runs the repository's ESLint checks.
+Lint:
 
-## Update content
+```sh
+npm run lint
+```
 
-- `src/data/portfolio.js`: identity, contact links, résumé URL, skills, projects, work, education, and certification.
-- `public/projects/`: optimized project screenshots.
-- `public/Shivam_Kumar_Resume.pdf`: downloadable résumé.
-- `src/index.css`: shared theme, typography, responsive hero, and animation tokens.
-- `index.html`: page title, search metadata, social metadata, and font loading. Add the final canonical URL and social sharing image when the deployment domain is known.
+## Update the content
 
-## Contact delivery
+All text, links and data live in **[content/portfolio.ts](content/portfolio.ts)**. You never need to touch a component to change what the site says.
 
-Copy `.env.example` to `.env` and configure the existing EmailJS service, template, and public key. The template receives `from_name`, `from_email`, `message`, and `topic`. Vite exposes `VITE_` variables in the client bundle; use only the EmailJS public key here, never a private credential. Configure the permitted production origins in your EmailJS account.
+| To change… | Edit |
+|---|---|
+| Name, role, headline, email, phone, social links | `profile` |
+| "Open to opportunities" status | `profile.available` (`true` / `false`) |
+| "At a glance" facts (Recent role, Education, Stack, Focus) | `facts` |
+| Section names, intro sentences and order (also drives the navigation) | `sections` |
+| Projects, their screenshots and "How it's built" diagrams | `projects` |
+| About paragraphs | `about` |
+| Jobs and education | `experience` |
+| Certifications | `credentials` |
+| Skills and where each was used | `skillGroups` and `sources` |
+| Page title, description and keywords for search | `site` |
 
-Without those settings, the form opens a populated draft in the visitor's email app and explains that they must send it there. With EmailJS configured, it validates input, prevents duplicate submissions, retains the message after an error, and confirms success only after the service responds. Direct email, phone, LinkedIn, and GitHub links are always available.
+Text fields can include a link written as `[text](#work)` or `[text](https://…)`.
 
-## Interaction and accessibility
+The shapes of all these fields are defined in [content/types.ts](content/types.ts). If you make a mistake, `npm run build` (or your editor) will point at it.
 
-- The first-visit boot screen prepares critical content, fonts, and the optional workspace module concurrently. Its progress reflects completed resource groups; there is no minimum display time. A three-second deadline and an explicit Skip/Escape action prevent a slow resource from blocking the page.
-- Subsequent visits in the same session, section deep links, and reduced-motion users bypass the intro. An error boundary preserves the introduction if the optional workspace cannot load.
-- The hero is a raw WebGL point cloud (no 3D engine) that unrolls from a sphere into a disc as the hero scrolls away and parts around the pointer. It pauses offscreen and in hidden tabs, caps the pixel ratio, renders a single still frame for reduced-motion users, and falls back to the CSS background when WebGL is unavailable.
-- The Process section's request walkthrough is a local interactive demonstration. On wide screens it pins, and scrolling steps it through request → route → query → respond; elsewhere it plays on its own. Send runs it on demand. Project previews open the real websites, and architecture views explain their components.
-- In-page links glide to their section through Lenis and move keyboard focus there. Project case studies open out of a clipped frame as they scroll in.
-- `Ctrl/Cmd + K` or `/` opens the command palette; `T` switches themes. Shortcuts ignore editable fields. Navigation and dialogs support keyboard access and focus restoration.
-- Decorative motion stops offscreen or in hidden tabs where applicable. Reduced-motion preferences disable smooth scrolling, pinning, scrubbed effects, drifting, marquee motion, reveal transforms, and animated typing. The marquee also has a pause button.
-- Project images load lazily with reserved dimensions.
+### Add a project
 
-## Deployment checks
+1. Save a screenshot (WebP, around 1350 × 630) in `public/projects/`.
+2. Add an entry to `projects` in `content/portfolio.ts` with its `image` path, width and height.
+3. Describe its `architecture` as stages, left to right, the way a request travels (e.g. Users → Interface → Server → Data). The "How it's built" diagram draws itself from that list.
 
-Run a production build, then verify desktop and mobile layouts, section links, the résumé download, theme switching, command palette, project views, and contact validation. Exercise delivery with a controlled EmailJS test only when you intend to send a message. Local browser-verification artifacts belong in the ignored `.qa/` directory.
+### Skills
+
+Each group in `skillGroups` is one row. `usedIn` lists ids from `sources` (a job, project or course). Skills used somewhere are shown in full ink, and the row lists the places. Skills with an empty list are shown in grey. The first three groups also label the glass layers in the hero.
+
+### Résumé
+
+Replace `public/Shivam_Kumar.pdf`. To use a different file name, update `profile.resume` as well.
+
+## Project structure
+
+```
+app/
+  layout.tsx            fonts, SEO metadata, theme script, smooth-scroll + motion providers
+  page.tsx              page composition (section order) + structured data (JSON-LD)
+  globals.css           design tokens (colours for both themes), type, buttons, CSS animations
+  opengraph-image.tsx   social preview image, generated at build time
+  icon.svg, apple-icon.tsx, robots.ts, sitemap.ts, not-found.tsx
+components/
+  layout/               header (+ mobile menu), theme toggle, footer
+  sections/             Hero, Skills, Experience, Work, About, Contact
+  project/              project feature, screenshot, and "How it's built" diagram
+  three/                the 3D hero: WebGL glass stack, its loader, and the CSS 3D version
+  motion/               smooth-scroll + motion providers, fade-in reveal
+  ui/                   small shared pieces (Section, Disclosure, Icon, RichText…)
+content/                all site content + its types
+lib/                    site URL, smooth-scroll handle, rich-text parser, reduced-motion hook
+public/                 résumé PDF and project screenshots
+```
+
+Colours are defined once as CSS variables at the top of `app/globals.css` (one block per theme). Components only use the semantic names (`bg`, `text`, `muted`, `accent`…), so re-theming is a matter of changing those values.
+
+## How the 3D works
+
+- **Desktop:** a WebGL scene (`components/three/GlassStack.tsx`) with real refractive glass. three.js is about 250 kB gzipped, so it is a separate chunk that loads when the visitor first moves the mouse, scrolls or types, or after 3 seconds. Until then the CSS version of the stack stands in, then crossfades to the WebGL glass. The page is fully usable first, and the scene stops rendering when the hero is off screen.
+- **Phones:** the same stack built with CSS 3D transforms (`components/three/CssStack.tsx`). Phones never download three.js, and they keep native touch scrolling (the smooth-scroll code loads only for mouse and trackpad users).
+- **Safety net:** if WebGL is missing, uses software rendering, or runs too slowly in the first seconds, the scene steps down to a lighter glass material and then to the CSS version. Nobody gets a frozen page or an empty hero.
+- **Reduced motion:** the hero becomes a single still screen, smooth scrolling and parallax are off, and reveals happen without movement.
+
+three.js is pinned to the 0.182 line: newer releases log a deprecation warning triggered by React Three Fiber.
+
+## Deploy to Vercel
+
+1. Push this repository to GitHub.
+2. On [vercel.com](https://vercel.com), choose **Add New → Project** and import the repository. Vercel detects Next.js; keep the default build settings.
+3. Click **Deploy**.
+
+Canonical URLs, the sitemap and social previews use your Vercel production URL automatically. If you add a custom domain, set it under **Settings → Environment Variables**:
+
+```
+NEXT_PUBLIC_SITE_URL=https://your-domain.com
+```
+
+Then redeploy. (See [.env.example](.env.example).)
+
+After deploying, check the live site with [PageSpeed Insights](https://pagespeed.web.dev/) and share the link once to confirm the preview card (title, description and image) looks right.
+
+## Notes
+
+- **Theme:** dark is the default because the site is designed dark-first. A visitor's choice from the toggle is remembered, and an inline script applies it before the first paint, so there's no flash.
+- **Accessibility:** semantic landmarks and headings, a skip link, full keyboard navigation (the mobile menu traps the page behind it and closes with Escape), visible focus rings, and AA colour contrast in both themes. The decorative 3D labels are hidden from screen readers because the Skills section lists everything in full.
+- **Motion** is kept quiet: blocks fade in once as they scroll into view, the opening text fades as the glass layers spread, and smooth scrolling applies to mouse wheels and trackpads only. Everything turns off for visitors who set "reduce motion".
+- `AGENTS.md` is written by `next dev` (Next.js's notes for AI coding tools); keeping it committed stops it reappearing as a change.
